@@ -1,35 +1,68 @@
-import 'dart:async';
 import 'package:molfar/core/imports.dart';
 import 'package:molfar/data/repositories/molfar_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'search_notifier.g.dart';
 
+class SearchState {
+  final Vehicle? currentVehicle;
+  final bool isLoading;
+  final String? errorMessage;
+
+  SearchState({
+    this.currentVehicle,
+    this.isLoading = false,
+    this.errorMessage,
+  });
+
+  SearchState copyWith({
+    Vehicle? currentVehicle,
+    bool? isLoading,
+    String? errorMessage,
+  }) {
+    return SearchState(
+      currentVehicle: currentVehicle,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage, 
+    );
+  }
+}
+
 @riverpod
 class SearchNotifier extends _$SearchNotifier {
   @override
-  FutureOr<Vehicle?> build() {
-    return null;
+  SearchState build() {
+    return SearchState();
   }
 
   Future<void> search(String query, SearchMode mode) async {
     if (query.trim().isEmpty) return;
 
-    state = const AsyncValue.loading();
+    state = state.copyWith(isLoading: true, errorMessage: null, currentVehicle: null);
 
-    final repository = ref.read(molfarRepositoryProvider);
-
+    final repository = await ref.read(molfarRepositoryProvider.future);
     final cleanQuery = query.replaceAll(' ', '');
 
-    state = await AsyncValue.guard(() async {
-      return await repository.searchVehicle(
+    try {
+      final result = await repository.searchVehicle(
         query: cleanQuery,
         isPlate: mode == SearchMode.plate,
       );
-    });
+
+      state = state.copyWith(
+        isLoading: false,
+        currentVehicle: result, 
+      );
+      
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
   }
 
   void clear() {
-    state = const AsyncValue.data(null);
+    state = state.copyWith(currentVehicle: null, errorMessage: null);
   }
 }

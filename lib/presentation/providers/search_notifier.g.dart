@@ -13,7 +13,7 @@ part of 'search_notifier.dart';
 const searchProvider = SearchNotifierProvider._();
 
 final class SearchNotifierProvider
-    extends $AsyncNotifierProvider<SearchNotifier, Vehicle?> {
+    extends $NotifierProvider<SearchNotifier, SearchState> {
   const SearchNotifierProvider._()
     : super(
         from: null,
@@ -31,22 +31,30 @@ final class SearchNotifierProvider
   @$internal
   @override
   SearchNotifier create() => SearchNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SearchState value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SearchState>(value),
+    );
+  }
 }
 
-String _$searchNotifierHash() => r'2875b2a66f7696dda8b47465020571baa7efeed1';
+String _$searchNotifierHash() => r'd727675839ba6c13cbbfcfdad2ac44ff4393c6d3';
 
-abstract class _$SearchNotifier extends $AsyncNotifier<Vehicle?> {
-  FutureOr<Vehicle?> build();
+abstract class _$SearchNotifier extends $Notifier<SearchState> {
+  SearchState build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<Vehicle?>, Vehicle?>;
+    final ref = this.ref as $Ref<SearchState, SearchState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<Vehicle?>, Vehicle?>,
-              AsyncValue<Vehicle?>,
+              AnyNotifier<SearchState, SearchState>,
+              SearchState,
               Object?,
               Object?
             >;

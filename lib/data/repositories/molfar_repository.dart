@@ -1,15 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:molfar/core/config_loader.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../models/vehicle.dart';
 
 part 'molfar_repository.g.dart';
 
 @riverpod
-Dio dio(Ref ref) {
+Future<Dio> dio(Ref ref) async {
+  final baseUrl = await ConfigLoader.getBaseUrl();
+
   final dio = Dio(
     BaseOptions(
-      baseUrl:
-          'https://duncishly-blowsiest-donte.ngrok-free.dev/api/v1',
+      baseUrl: baseUrl,
       headers: {'ngrok-skip-browser-warning': 'true'},
     ),
   );
@@ -22,8 +24,9 @@ Dio dio(Ref ref) {
 }
 
 @riverpod
-MolfarRepository molfarRepository(Ref ref) {
-  return MolfarRepository(ref.watch(dioProvider));
+Future<MolfarRepository> molfarRepository(Ref ref) async {
+  final dio = await ref.watch(dioProvider.future);
+  return MolfarRepository(dio);
 }
 
 class MolfarRepository {
@@ -47,13 +50,12 @@ class MolfarRepository {
       final data = response.data;
       List<dynamic> list = [];
 
-
       if (data is List) {
         list = data;
       } else if (data is Map && data.containsKey('data')) {
         list = data['data'];
       }
-      
+
       if (list.isEmpty) {
         return null;
       }
