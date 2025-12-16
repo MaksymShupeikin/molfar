@@ -1,7 +1,14 @@
+import 'package:flutter/services.dart';
 import 'package:molfar/core/imports.dart';
 import 'package:molfar/presentation/pages/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+
   runApp(ProviderScope(child: const MolfarApp()));
 }
 

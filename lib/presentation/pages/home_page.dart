@@ -57,7 +57,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                   (Widget child, Animation<double> animation) {
                     return ScaleTransition(
                       scale: animation,
-
                       alignment: Alignment.center,
                       child: FadeTransition(
                         opacity: animation,
@@ -66,13 +65,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                     );
                   },
               child: vehicle != null
-                  ? VehicleInfoCard(vehicle: vehicle, onReset: _clearSearch,)
+                  ? VehicleInfoCard(
+                      vehicle: vehicle,
+                      onReset: _clearSearch,
+                    )
                   : SingleChildScrollView(
                       key: const ValueKey('SearchForm'),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const MolfarLogo(size: 40),
+                          const MolfarLogo(size: 100),
                           const SizedBox(height: 75),
                           CustomToggle(
                             currentMode: _currentMode,
