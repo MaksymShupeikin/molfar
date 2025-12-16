@@ -1,0 +1,4 @@
+enum SearchMode {
+  plate,
+  vin
+}
